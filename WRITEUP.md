@@ -3,7 +3,10 @@
 
 This project servers as a proof of concept for developing smart IoT solution using IntelOpen VINO software tools and Intel Hardware. The Objective of the app is to detect people in a designated area, provide the number of people in the frame, average duration of the people in the frame and total count. The app should count the number of people in the current frame, the duration that a person is in the frame (time elapsed between entering and exiting a frame) and the total count of people. It then sends the data to a local web server using the Paho MQTT Python package.
 
-A link to the demo of the application is ![Demo](https://youtu.be/eYqSMlucMk4)
+A link to the demo of the application is
+
+[OpenVino -People Counter](https://www.youtube.com/watch?v=eYqSMlucMk4)
+
 
 
 ![architectural diagram](./images/arch_diagram.png)
@@ -75,12 +78,25 @@ From the main directory:
 
 ## What model to use
 
-It is up to you to decide on what model to use for the application. You need to find a model not already converted to Intermediate Representation format (i.e. not one of the Intel® Pre-Trained Models), convert it, and utilize the converted model in your application.
+ ####  Model Selection
+For this project faster_rcnn_inception_v2_coco model is used from the tensorflow model detection zoo.
+ 
+Downloading the model from the GitHub repository of Tensorflow Object Detection Model Zoo by the following command:
+```
+wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz
+```
 
-Note that you may need to do additional processing of the output to handle incorrect detections, such as adjusting confidence threshold or accounting for 1-2 frames where the model fails to see a person already counted and would otherwise double count.
+Extracting the tar.gz file by the following command:
+```
+tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz 
+```
+Changing the directory to the extracted folder of the downloaded model:
+cd faster_rcnn_inception_v2_coco_2018_01_28
+The model can’t be the existing models provided by Intel as a part of the Udacity acceptance criteria of the Nanodegree project. So, converting the TensorFlow model to Intermediate Representation (IR) or OpenVINO IR format. The command used is given below:
+```
+python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json
 
-**If you are otherwise unable to find a suitable model after attempting and successfully converting at least three other models**, you can document in your write-up what the models were, how you converted them, and why they failed, and then utilize any of the Intel® Pre-Trained Models that may perform better.
-The link to correctly start and 
+```
 
 ## Run the application
 
@@ -150,27 +166,13 @@ If you are in the classroom workspace, use the “Open App” button to view the
 
 ### Snapshot of the app output 
 
-[IntelOpenVINO](/images/Intel openVino.png)
 
 
-##  Model selection and Custom Layers
- ####  Model Selection
-Downloading the model from the GitHub repository of Tensorflow Object Detection Model Zoo by the following command:
-```
-wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz
-```
+![people-counter-python](./images/people-counter-image.png)
 
-Extracting the tar.gz file by the following command:
-```
-tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz 
-```
-Changing the directory to the extracted folder of the downloaded model:
-cd faster_rcnn_inception_v2_coco_2018_01_28
-The model can’t be the existing models provided by Intel as a part of the Udacity acceptance criteria of the Nanodegree project. So, converting the TensorFlow model to Intermediate Representation (IR) or OpenVINO IR format. The command used is given below:
-```
-python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json
 
-```
+##   Custom Layers
+
  ### Custom layers
  
 This project is implemented using faster_rcnn_inception_v2_coco_2018_01_28 which gives output in terms of bounding boxes on personal identification.
@@ -210,23 +212,23 @@ In investigating potential people counter models, I tried each of the following 
 
 - Model 1: [ssd_inception_v2_coco_2018_01_28]
   - [Model Source](http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz)
-  - I converted the model to an Intermediate Representation with the following arguments
+  - converted the model to an Intermediate Representation with the following arguments
  ```
   python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model model/ssd_inception_v2_coco_2018_01_28/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config model/ssd_inception_v2_coco_2018_01_28/pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json
   
  ```
-   - The model was sufficient for the app because it didn't give the sufficient results of detecting people in the frame. 
+   - The model was insufficient for the app because it didn't give the sufficient results of detecting people in the frame. 
    - I tried to improve the model for the app by changing the threshold of detection in the range 0.3 to 0.6, still the reults were not proper.
   
 - Model 2: [ssd_mobilenet_v2]
- - [Model Source](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz)
+  - [Model Source](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz)
   - I converted the model to an Intermediate Representation with the following arguments
   
-  ```
- python /opt/intel/openvino/deployment_tools/model_optimizer/mo_tf.py --input_model model/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config model/ssd_mobilenet_v2_coco_2018_03_29/pipeline.config --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json --reverse_input_channel
+ ```
+python /opt/intel/openvino/deployment_tools/model_optimizer/mo_tf.py --input_model model/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config model/ssd_mobilenet_v2_coco_2018_03_29/pipeline.config --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json --reverse_input_channel
  ```
   
- The model is run using the following command without connecting to the MQTT server as client :
+   The model is run using the following command without connecting to the MQTT server as client :
   
   ```
   python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m model/ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.xml -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so -d CPU -pt 0.6
