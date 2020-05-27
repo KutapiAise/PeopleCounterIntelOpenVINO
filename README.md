@@ -249,6 +249,14 @@ python /opt/intel/openvino/deployment_tools/model_optimizer/mo_tf.py --input_mod
  ```
 python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m model/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.xml -l /opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so -d CPU -pt 0.6
  ```
+## Comparing the performance
+
+| Syntax      | Description |Syntax      | Description |
+| ----------- | ----------- |----------- | ----------- |
+| Header      | Title       |Header      | Title       |
+| Paragraph   | Text        |Paragraph   | Text        |
+ 
+ 
  
  ## Reference
  
