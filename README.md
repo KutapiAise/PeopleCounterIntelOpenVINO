@@ -251,10 +251,10 @@ python main.py -i resources/Pedestrian_Detect_2_1_1.mp4 -m model/faster_rcnn_inc
  ```
 ## Comparing the performance
 
-| Syntax      | Description |Syntax      | Description |
-| ----------- | ----------- |----------- | ----------- |
-| Header      | Title       |Header      | Title       |
-| Paragraph   | Text        |Paragraph   | Text        |
+| Model        | Latency ( µs)  |Memory (mb)     | 
+| ----------- | ----------- |----------- | 
+| Faster_rcnn_inception_v2_coco  (TF)     | 1281       |562      |
+| Faster_rcnn_inception_v2_coco  (OpenVINO)   | 889        |282   | 
  
  
  
